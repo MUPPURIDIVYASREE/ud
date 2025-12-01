@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    
+    tools {
+        jdk 'JDK17'
+        maven 'Maven'
+    }
+
+    stages {
+        stage('clone') {
+            steps {
+                git credentialsId: 'b48d53d7-114c-4ed2-98bb-db576279785b', url: 'https://github.com/MUPPURIDIVYASREE/onlinebookstore'
+            }
+            
+        }
+         stage('Build') {
+            steps {
+                echo 'Hello Build'
+                bat 'mvn clean install'
+            }
+        }
+         stage('deploy') {
+            steps {
+                echo "deploy"
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: '85dbd5ce-5b58-40f6-b79a-f82eaf4b05e0', path: '', url: 'http://localhost:8081/')], contextPath: 'onlinebookstore.war', war: '**/*.war'
+
+            }
+            
+        }
+    }
+}
